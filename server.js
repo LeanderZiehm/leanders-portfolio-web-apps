@@ -74,8 +74,7 @@ app.get('/auth/github/callback', async (req, res) => {
     const primaryEmail = emails.find(e => e.primary && e.verified)?.email || null;
 
     user.email = primaryEmail;
-    user.isAdmin = primaryEmail === ADMIN_EMAIL;
-
+    user.isAdmin = primaryEmail.toLowerCase() === ADMIN_EMAIL.toLowerCase();
     req.session.user = user;
     res.redirect('/profile');
   } catch (err) {
