@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile</title>
+</head>
+<body>
+  <h1>Logged In!</h1>
+  <div id="profile"></div>
+  <a href="/logout">Logout</a>
+
+  <script>
+    fetch('/api/user')
+      .then(res => res.json())
+      .then(user => {
+        document.getElementById('profile').innerHTML = `
+          <p><strong>Username:</strong> ${user.login}</p>
+          <p><strong>Name:</strong> ${user.name}</p>
+          <img src="${user.avatar_url}" width="100"/>
+        `;
+      })
+      .catch(() => {
+        document.getElementById('profile').innerText = 'Failed to load profile.';
+      });
+  </script>
+</body>
+</html>
