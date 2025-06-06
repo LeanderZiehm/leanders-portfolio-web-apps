@@ -1,6 +1,6 @@
-import express from 'express';
-import session from 'express-session';
-import dotenv from 'dotenv';
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
 
 dotenv.config();
 
