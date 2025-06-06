@@ -5,7 +5,7 @@
   <title>Profile</title>
 </head>
 <body>
-  <h1>Logged In!</h1>
+  <h1>Profile</h1>
   <div id="profile"></div>
   <a href="/logout">Logout</a>
 
@@ -13,14 +13,20 @@
     fetch('/api/user')
       .then(res => res.json())
       .then(user => {
-        document.getElementById('profile').innerHTML = `
+        const profileDiv = document.getElementById('profile');
+        profileDiv.innerHTML = `
           <p><strong>Username:</strong> ${user.login}</p>
-          <p><strong>Name:</strong> ${user.name}</p>
+          <p><strong>Name:</strong> ${user.name || 'N/A'}</p>
+          <p><strong>Email:</strong> ${user.email || 'Not available'}</p>
           <img src="${user.avatar_url}" width="100"/>
         `;
+
+        if (user.isAdmin) {
+          profileDiv.innerHTML += `<p style="color: red;"><strong>ADMIN ACCESS GRANTED</strong></p>`;
+        }
       })
       .catch(() => {
-        document.getElementById('profile').innerText = 'Failed to load profile.';
+        document.getElementById('profile').innerText = 'Error loading profile.';
       });
   </script>
 </body>
