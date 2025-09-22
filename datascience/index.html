@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Companies</title>
+    <script src="data.js"></script>
+    <script src="https://self-hosted-analytics.vercel.app/track.js"></script>
+  <style>
+        /* General Reset and Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+
+            background-color: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+             padding: 20px;
+        }
+        
+        h1, h2 {
+            color: #444;
+        }
+        
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+
+
+        /* Filter Form Styling */
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        form label {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        select {
+            padding: 8px 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        select:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        /* Companies List */
+        .company {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+/*        .company:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        }
+*/
+        .company-logo img {
+            max-width: 100px;
+            border-radius: 8px;
+        }
+
+        .company-details {
+            margin-left: 20px;
+            flex: 1;
+        }
+
+        .company-details h2 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .company-details p {
+            margin: 5px 0;
+        }
+
+        .company-details strong {
+            font-weight: 600;
+        }
+
+        /* Total Companies */
+        #total-companies {
+            font-weight: bold;
+            color: #444;
+        }
+                .technology-card {
+            display: inline-block;
+            padding: 20px;
+            margin: 10px;
+            background-color: #f4f4f4;
+            border-radius: 15px;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+                .technology-card img {
+            max-width: 60px;
+            height: auto;
+        }
+        .technology-card h4 {
+            margin: 10px 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .company {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .company-logo img {
+                margin-bottom: 15px;
+            }
+
+            .company-details {
+                margin-left: 0;
+            }
+
+            form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>German Companies that use Next.js</h1>
+    <a href="./elasticSearch.html">See Berlin companies that use elastic search</a>
+    <p>Total Companies: <span id="total-companies">0</span></p>
+    <form id="filter-form">
+        <label for="sort_by">Sort By:</label>
+        <select name="sort_by" id="sort_by">
+            <option value="name">Company Name</option>
+            <option value="num_jobs">Jobs Available</option>
+            <option value="num_jobs_last_30_days">Jobs Last 30 Days</option>
+            <option value="employee_count">Employee Count</option>
+            <option value="industry">Industry</option>
+            <option value="city">City</option>
+        </select>
+        <label for="industry">Filter by Industry:</label>
+        <select name="industry" id="industry">
+            <option value="">All Industries</option>
+        </select>
+        <label for="city">Filter by City:</label>
+        <select name="city" id="city">
+            <option value="">All Cities</option>
+        </select>
+    </form>
+    <div id="companies-list"></div>
+   <script>
+    const totalCompaniesElement = document.getElementById('total-companies');
+    const companiesListElement = document.getElementById('companies-list');
+    const industrySelect = document.getElementById('industry');
+    const citySelect = document.getElementById('city');
+    const sortBySelect = document.getElementById('sort_by');
+    let companies = [...data]; // Create a copy of the data
+
+function updateIndustries() {
+    // Count occurrences of each industry
+    const industryCounts = companies.reduce((acc, company) => {
+        const industry = company.industry || 'Unknown';
+        acc[industry] = (acc[industry] || 0) + 1;
+        return acc;
+    }, {});
+
+    // Create a sorted array of industries by count in descending order
+    const sortedIndustries = Object.entries(industryCounts)
+        .sort((a, b) => b[1] - a[1]) // Sort by count (descending)
+        .map(entry => entry[0]);     // Extract only the industry names
+
+    // Update the dropdown (industrySelect)
+    sortedIndustries.forEach(industry => {
+        const option = document.createElement('option');
+        option.value = industry;
+        option.textContent = industry;
+        industrySelect.appendChild(option);
+    });
+}
+
+
+    // Update the list of industries
+    // function updateIndustries() {
+    //     const industries = [...new Set(companies.map(company => company.industry || 'Unknown'))].sort();
+    //     industries.forEach(industry => {
+    //         const option = document.createElement('option');
+    //         option.value = industry;
+    //         option.textContent = industry;
+    //         industrySelect.appendChild(option);
+    //     });
+    // }
+
+    // Update the list of cities
+    function updateCities() {
+        const cities = [...new Set(companies.map(company => company.city || 'Unknown'))].sort();
+        cities.forEach(city => {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city;
+            citySelect.appendChild(option);
+        });
+    }
+
+    // Sort companies by a selected attribute
+function sortCompanies(companies, sortBy, order = 'desc') {
+    return companies.sort((a, b) => {
+        const valA = typeof a[sortBy] === 'string' ? a[sortBy].toLowerCase() : a[sortBy];
+        const valB = typeof b[sortBy] === 'string' ? b[sortBy].toLowerCase() : b[sortBy];
+        
+        if (order === 'asc') {
+            if (valA < valB) return -1;
+            if (valA > valB) return 1;
+        } else if (order === 'desc') {
+            if (valA < valB) return 1;
+            if (valA > valB) return -1;
+        }
+        return 0;
+    });
+}
+
+
+    // Filter companies by industry and city
+    function filterCompanies(companies, industryFilter, cityFilter) {
+        return companies.filter(company => {
+            const matchesIndustry = industryFilter 
+                ? company.industry && company.industry.toLowerCase().includes(industryFilter.toLowerCase()) 
+                : true;
+
+            const matchesCity = cityFilter 
+                ? company.city && company.city.toLowerCase().includes(cityFilter.toLowerCase()) 
+                : true;
+
+            return matchesIndustry && matchesCity;
+        });
+    }
+
+    // Render the list of companies
+    function renderCompanies(companies) {
+        companiesListElement.innerHTML = '';
+        companies.forEach(company => {
+            const companyDiv = document.createElement('div');
+            companyDiv.classList.add('company');
+
+
+
+
+
+
+             let technologyCard = `<h3>Technologies Found:</h3><div class="technologies-cards">`;
+                company.technologies_found.forEach(tech => {
+                    technologyCard += `
+                        <div class="technology-card">
+                            <img src="${tech.technology.logo}" alt="${tech.technology.name} Logo">
+                            <h4>${tech.technology.name}</h4>
+                            <p><strong>Jobs Found:</strong> ${tech.jobs}</p>
+                        </div>
+                    `;
+                      });
+
+
+            companyDiv.innerHTML = `
+                <div class="company-logo">
+                    <img src="${company.logo}" alt="${company.name} logo">
+                </div>
+                <div class="company-details">
+                    <h2>${company.name}</h2>
+                    <p><strong>LinkedIn:</strong> <a href="${company.linkedin_url}" target="_blank">${company.linkedin_url}</a></p>
+                    <p><strong>Company URL:</strong> <a href="${company.url}" target="_blank">${company.url}</a></p>
+                    <p><strong>Industry:</strong> ${company.industry}</p>
+                    <p><strong>Employee Count:</strong> ${company.employee_count}</p>
+                    <p><strong>Total Jobs:</strong> ${company.num_jobs}</p>
+                    <p><strong>Jobs Last 30 Days:</strong> ${company.num_jobs_last_30_days}</p>
+                    <p><strong>Description:</strong> ${company.long_description}</p>
+                    <p><strong>City:</strong> ${company.city}</p>
+                    <p><strong>Technologies:</strong> ${company.technology_names}</p>
+                    ${technologyCard}
+                </div>
+            `;
+            companiesListElement.appendChild(companyDiv);
+        });
+        totalCompaniesElement.textContent = companies.length;
+    }
+
+    // Handle change events for sorting, industry, and city filters
+    function handleChange() {
+        const sortBy = sortBySelect.value;
+        const industryFilter = industrySelect.value;
+        const cityFilter = citySelect.value;
+        companies = filterCompanies(data, industryFilter, cityFilter);
+        companies = sortCompanies(companies, sortBy);
+        renderCompanies(companies);
+    }
+
+    // Add event listeners for automatic filtering and sorting
+    sortBySelect.addEventListener('change', handleChange);
+    industrySelect.addEventListener('change', handleChange);
+    citySelect.addEventListener('change', handleChange);
+
+    // Initialize lists and render companies on page load
+    updateIndustries();
+    updateCities();
+    renderCompanies(companies);
+</script>
+
+</body>
+</html>

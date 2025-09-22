@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://self-hosted-analytics.vercel.app/track.js"></script>
+    <title>Company Information</title>
+    <style>
+
+  body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+
+        .company {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .company img {
+            max-width: 150px;
+            height: auto;
+        }
+        .company h2 {
+            margin-top: 0;
+        }
+        .technologies-cards {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .technology-card {
+            display: inline-block;
+            padding: 20px;
+            margin: 10px;
+            background-color: #f4f4f4;
+            border-radius: 15px;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .technology-card img {
+            max-width: 60px;
+            height: auto;
+        }
+        .technology-card h4 {
+            margin: 10px 0;
+        }
+        .filters {
+            margin-bottom: 20px;
+        }
+        .filters select, .filters input {
+            padding: 8px;
+            margin-right: 10px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        #total-companies {
+            font-weight: bold;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+     <h1>Berlin Companies that use Elastic Search</h1>
+    <a href="./index.html">See German companies that use Next.js</a>
+    <p>Total Companies: <span id="total-companies">0</span></p>
+    <div class="filters">
+        <input type="text" id="search" placeholder="Search companies..." />
+        <select id="industry-filter">
+            <option value="">All Industries</option>
+        </select>
+        <select id="city-filter">
+            <option value="">All Cities</option>
+        </select>
+        <select id="sort-by">
+            <option value="name">Sort by Name</option>
+            <option value="industry">Sort by Industry</option>
+            <option value="employee_count">Sort by Employee Count</option>
+        </select>
+    </div>
+    <div id="companies-container"></div>
+    <script src="companies.js"></script>
+    <script>
+        // Assuming 'companies' is available after the script is loaded
+        const companiesContainer = document.getElementById("companies-container");
+        const totalCompaniesElement = document.getElementById("total-companies");
+        const searchInput = document.getElementById("search");
+        const industryFilter = document.getElementById("industry-filter");
+        const cityFilter = document.getElementById("city-filter");
+        const sortBySelect = document.getElementById("sort-by");
+        // Filter and sort logic
+        let filteredCompanies = [...companies]; // Copy of companies data
+        // Update the industries and cities dropdowns
+        function updateFilters() {
+            const industries = [...new Set(companies.map(company => company.industry))].sort();
+            const cities = [...new Set(companies.map(company => company.city))].sort();
+            industries.forEach(industry => {
+                const option = document.createElement("option");
+                option.value = industry;
+                option.textContent = industry;
+                industryFilter.appendChild(option);
+            });
+            cities.forEach(city => {
+                const option = document.createElement("option");
+                option.value = city;
+                option.textContent = city;
+                cityFilter.appendChild(option);
+            });
+        }
+        // Function to render companies
+        function renderCompanies(companies) {
+            companiesContainer.innerHTML = ''; // Clear the container
+            companies.forEach(company => {
+                const companyDiv = document.createElement('div');
+                companyDiv.classList.add('company');
+                let companyHTML = `
+                    <img src="${company.logo}" alt="${company.name} Logo">
+                    <h2>${company.name}</h2>
+                    <p><strong>Domain:</strong> <a href="http://${company.domain}" target="_blank">${company.domain}</a></p>
+                    <p><strong>Industry:</strong> ${company.industry}</p>
+                    <p><strong>Country:</strong> ${company.country}</p>
+                    <p><strong>Founded:</strong> ${company.founded_year}</p>
+                    <p><strong>Employee Count:</strong> ${company.employee_count}</p>
+                    <p><strong>Website:</strong> <a href="${company.url}" target="_blank">${company.url}</a></p>
+                    <p><strong>LinkedIn:</strong> <a href="${company.linkedin_url}" target="_blank">LinkedIn Profile</a></p>
+                    <p><strong>Description:</strong> ${company.long_description}</p>
+                `;
+                companyHTML += `<h3>Technologies Found:</h3><div class="technologies-cards">`;
+                company.technologies_found.forEach(tech => {
+                    companyHTML += `
+                        <div class="technology-card">
+                            <img src="${tech.technology.logo}" alt="${tech.technology.name} Logo">
+                            <h4>${tech.technology.name}</h4>
+                            <p><strong>Jobs Found:</strong> ${tech.jobs}</p>
+                        </div>
+                    `;
+                });
+                companyHTML += `</div>`;
+                companyDiv.innerHTML = companyHTML;
+                companiesContainer.appendChild(companyDiv);
+            });
+            totalCompaniesElement.textContent = companies.length; // Update company count
+        }
+        // Apply filters and sorting
+        function filterAndSortCompanies() {
+            let result = [...companies];
+            // Filter by search
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm) {
+                result = result.filter(company => company.name.toLowerCase().includes(searchTerm));
+            }
+            // Filter by industry
+            const industryTerm = industryFilter.value.toLowerCase();
+            if (industryTerm) {
+                result = result.filter(company => company.industry.toLowerCase().includes(industryTerm));
+            }
+            // Filter by city
+            const cityTerm = cityFilter.value.toLowerCase();
+            if (cityTerm) {
+                result = result.filter(company => company.city.toLowerCase().includes(cityTerm));
+            }
+            // Sort by selected criteria
+            const sortBy = sortBySelect.value;
+            result = result.sort((a, b) => {
+                if (sortBy === "name") return a.name.localeCompare(b.name);
+                if (sortBy === "industry") return a.industry.localeCompare(b.industry);
+                if (sortBy === "employee_count") return a.employee_count - b.employee_count;
+                return 0;
+            });
+            renderCompanies(result);
+        }
+        // Add event listeners for filters and search
+        searchInput.addEventListener("input", filterAndSortCompanies);
+        industryFilter.addEventListener("change", filterAndSortCompanies);
+        cityFilter.addEventListener("change", filterAndSortCompanies);
+        sortBySelect.addEventListener("change", filterAndSortCompanies);
+        // Initialize the filters and render companies
+        updateFilters();
+        filterAndSortCompanies();
+    </script>
+</body>
+</html>
