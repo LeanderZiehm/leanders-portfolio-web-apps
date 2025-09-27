@@ -1,88 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Leander Ziehm - App Index</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <script defer src="https://umami.leanderziehm.com/script.js" data-website-id="ad8cf94a-ca19-4fa0-8848-5f248507c376"></script>
-</head>
-<body class="bg-gray-100 min-h-screen p-6">
-   <a href="/login">Login with GitHub</a>
-  <div class="max-w-6xl mx-auto">
-    <h1 class="text-4xl font-bold text-center mb-10">Leander Ziehm - App Index</h1>
-    <div id="app-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
-  </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leander Ziehm - App Index</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <script
+      defer
+      src="https://umami.leanderziehm.com/script.js"
+      data-website-id="ad8cf94a-ca19-4fa0-8848-5f248507c376"
+    ></script>
+  </head>
+  <body class="bg-gray-100 min-h-screen p-6">
+    <a href="/login">Login with GitHub</a>
+    <div class="max-w-6xl mx-auto">
+      <h1 class="text-4xl font-bold text-center mb-10">
+        Leander Ziehm - App Index
+      </h1>
+      <div
+        id="app-grid"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+      ></div>
+    </div>
 
-  <script>
-const projects = [
-  {
-    title: "LLMano",
-    description: "LLM anonymization recommender",
-    url: "https://llmano.leanderziehm.com"
-  },
-  {
-    title: "LoveLingo",
-    description: "Language learning and practice platform.",
-    url: "https://lovelingo.leanderziehm.com"
-  },
-  {
-    title: "Bayern Hackathon",
-    description: "PDF chat and form filler tool.",
-    url: "https://bayern-hackathon-ai-form.leanderziehm.com"
-  },
-  {
-    title: "ChatGPT Code Zip",
-    description: "Tool to generate and download code packages.",
-    url: "https://chatgpt-code-zip.leanderziehm.com"
-  },
-  {
-    title: "Bookmarks",
-    description: "Bookmark manager and viewer.",
-    url: "https://bookmarks.leanderziehm.com"
-  },
-  {
-    title: "TTS",
-    description: "Text-to-speech service.",
-    url: "https://tts.leanderziehm.com"
-  },
-  {
-    title: "PDF",
-    description: "PDF processing web app.",
-    url: "https://pdf.leanderziehm.com"
-  },
+    <script>
+      const projects = [
+              {
+          title: "tandemexchange.de",
+          description: "Language Learning Web APP",
+          url: "https://www.tandemexchange.de/",
+        },
+        {
+          title: "TTS",
+          description: "Text-to-speech service.",
+          url: "https://tts.leanderziehm.com",
+        },
+        {
+          title: "Smart Notepad",
+          description: "Task manager and text editor in one.",
+          url: "https://notes.leanderziehm.com/",
+        },
+        {
+          title: "Bookmarks",
+          description: "Bookmark manager and viewer.",
+          url: "https://bookmarks.leanderziehm.com",
+        },
+        {
+          title: "ChatGPT Code Zip",
+          description: "Tool to generate and download code packages.",
+          url: "https://chatgpt-code-zip.leanderziehm.com",
+        },
+        {
+          title: "PDF",
+          description: "PDF processing web app.",
+          url: "https://pdf.leanderziehm.com",
+        },
 
-  {
-    title: "Smart Notepad",
-    description: "Task manager and text editor in one.",
-    url: "https://notes.leanderziehm.com/"
-  }
-];
+        {
+          title: "Bayern Hackathon",
+          description: "PDF chat and form filler tool.",
+          url: "https://bayern-hackathon-ai-form.leanderziehm.com",
+        },
 
+        {
+          title: "LLMano",
+          description: "LLM anonymization recommender",
+          url: "https://llmano.leanderziehm.com",
+        },
+        {
+          title: "LoveLingo",
+          description: "Language learning and practice platform.",
+          url: "https://lovelingo.leanderziehm.com",
+        },
+      ];
 
-    const appGrid = document.getElementById('app-grid');
+      const appGrid = document.getElementById("app-grid");
 
-    projects.forEach(project => {
-      const card = document.createElement('a');
-      card.href = project.url;
-      card.target = "_blank";
-      card.className = `
+      projects.forEach((project) => {
+        const card = document.createElement("a");
+        card.href = project.url;
+        card.target = "_blank";
+        card.className = `
         p-6 rounded-2xl transition
-        ${project.todo ? 'bg-yellow-100 text-yellow-900 hover:shadow-md' : 'bg-white shadow-md hover:shadow-xl'}
+        ${
+          project.todo
+            ? "bg-yellow-100 text-yellow-900 hover:shadow-md"
+            : "bg-white shadow-md hover:shadow-xl"
+        }
       `;
 
-      const title = document.createElement('h2');
-      title.className = "text-xl font-semibold mb-2";
-      title.textContent = project.title + (project.todo ? " (TODO/Not Implemented yet)" : "");
+        const title = document.createElement("h2");
+        title.className = "text-xl font-semibold mb-2";
+        title.textContent =
+          project.title + (project.todo ? " (TODO/Not Implemented yet)" : "");
 
-      const desc = document.createElement('p');
-      desc.className = "text-gray-600";
-      desc.textContent = project.description;
+        const desc = document.createElement("p");
+        desc.className = "text-gray-600";
+        desc.textContent = project.description;
 
-      card.appendChild(title);
-      card.appendChild(desc);
-      appGrid.appendChild(card);
-    });
-  </script>
-</body>
+        card.appendChild(title);
+        card.appendChild(desc);
+        appGrid.appendChild(card);
+      });
+    </script>
+  </body>
 </html>
